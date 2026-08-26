@@ -1,0 +1,120 @@
+[project]
+name = "JimGW"
+dynamic = ["version"]
+description = "A JAX-based gravitational-wave inference toolkit"
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [
+	{name = "Kaze W. K. Wong", email = "kazewong.physics@gmail.com"},
+]
+maintainers = [
+  {name = "Thomas Ng", email = "thomas.ng@nikhef.nl"}
+]
+license = {file = "LICENSE"}
+classifiers = [
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "License :: OSI Approved :: MIT License",
+    "Intended Audience :: Science/Research",
+    "Operating System :: OS Independent",
+]
+
+dependencies = [
+    "anesthetic>=2",
+    "astropy>=7.0.1",
+    "beartype>=0.19.0",
+    "blackjax>=1.4",
+    "corner>=2.2.3",
+    "equinox>=0.11",
+    "evosax>=0.2.0",
+    "flowmc>=0.6.1",
+    "gwpy>=3.0.12",
+    "jax>=0.8.2",
+    "jaxtyping>=0.3.3",
+    "matplotlib>=3.10.7",
+    "numpy>=1.26",
+    "pydantic>=2",
+    "requests>=2.32.3",
+    "ripplegw>=0.2.1",
+    "scipy>=1.17.1",
+    "tomli-w>=1.0",
+    "typer>=0.12",
+]
+
+[project.scripts]
+jim-run = "jimgw.cli:app"
+
+[project.optional-dependencies]
+cuda = [
+    "jax[cuda]>=0.8.2",
+]
+
+[dependency-groups]
+test = [
+    "pre-commit>=4.2.0",
+    "coverage>=7.7.0",
+    "coveralls>=4.0.1",
+    "pytest>=8.3.3",
+    "pytest-cov>=6.0.0",
+    "ruff>=0.12.2",
+    "pyright>=1.1.402",
+]
+cross-validation = [
+    "lalsuite>=7.26.4",
+    "bilby[gw]>=2.8.0",
+]
+doc = [
+    "nbconvert",
+    "mkdocstrings[python]",
+    "pymdown-extensions",
+    "zensical",
+]
+nested-sampling = [
+    "blackjax",
+]
+
+[project.urls]
+Homepage = "https://github.com/GW-JAX-Team/Jim"
+Documentation = "https://gw-jax-team.github.io/Jim/"
+Repository = "https://github.com/GW-JAX-Team/Jim"
+"Bug Tracker" = "https://github.com/GW-JAX-Team/Jim/issues"
+Changelog = "https://github.com/GW-JAX-Team/Jim/releases"
+
+[tool.uv.sources]
+jimgw = { workspace = true }
+# Pinned to a maintained fork on a dedicated `jim` branch that carries:
+#   - blackjax.ns.{base,adaptive,utils}                                     (NS-AW, NSS)
+#   - blackjax.nss                                                          (NSS)
+# When the NS module land upstream, drop this pin and the nested-sampling group.
+blackjax = { git = "https://github.com/GW-JAX-Team/blackjax.git", branch = "jim" }
+
+[build-system]
+requires = ["hatchling", "hatch-vcs"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+source = "vcs"
+fallback-version = "0.0.0"
+raw-options = { local_scheme = "no-local-version" }
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+markers = [
+    "integration: end-to-end Jim runs",
+    "slow: slow tests",
+]
+
+[tool.pyright]
+include = ["src"]
+
+[tool.ruff.lint]
+ignore = ["F722"]
+
+[tool.coverage.report]
+exclude_also = [
+    'def __repr__',
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "@(abc\\. )?abstractmethod",
+]
